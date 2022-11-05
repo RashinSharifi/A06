@@ -30,6 +30,85 @@ function getAllEmployees() {
 
 };
 
+function addEmployee(employeeData) {
+    return new Promise(function (resolve, reject) {
+        console.log(employeeData)
+        if (employeeData.isManager === undefined) {
+            employeeData.isManager = false;
+        } else {
+            employeeData.isManager = true;
+        }
+
+        employeeData.employeeNum = employees.length + 1;
+        employees.push(employeeData);
+        
+        resolve();
+    });
+}
+
+function getEmployeesByStatus(status) {
+    return new Promise((resolve, reject) => {
+        let filterdEmployees = [];
+        for (let i=0; i<employees.length; i++) {
+            if (employees[i].status === status) filterdEmployees.push(employees[i]);
+        }
+
+        // let filterdEmployees = employees.filter(employee => employee.status === status);
+
+        if (filterdEmployees.length === 0)
+            reject("no result returned");
+        resolve(filterdEmployees);
+    });
+}
+
+function getEmployeesByDepartment(department) {
+    return new Promise((resolve, reject) => {
+        // let filterdEmployees = []
+        // for (let i=0; i<employees.length; i++) {
+        //     if (employees[i].department == department) filterdEmployees.push(employees[i]);
+        // }
+
+        let filterdEmployees = employees.filter(employee => employee.department == department);
+
+        if (filterdEmployees.length === 0)
+            reject("no result returned");
+        resolve(filterdEmployees);
+    });
+}
+
+function getEmployeesByManager(manager) {
+    return new Promise((resolve, reject) => {
+        // let filterdEmployees = []
+        // for (let i=0; i<employees.length; i++) {
+        //     if (employees[i].employeeManagerNum == manager) filterdEmployees.push(employees[i]);
+        // }
+
+        let filterdEmployees = employees.filter(employee => employee.employeeManagerNum == manager);
+
+        if (filterdEmployees.length === 0)
+            reject("no result returned");
+        resolve(filterdEmployees);
+    });
+}
+
+function getEmployeeByNum(num) {
+    return new Promise((resolve, reject) => {
+        // for (let i=0; i<employees.length; i++) {
+        //     if (employees[i].employeeNum == num) {
+        //         resolve(employees[i]);
+        //     }
+        // }
+
+        // If no values satisfy the testing function, undefined is returned.
+        let found = employees.find(employee => employee.employeeNum == num);
+        if (found) {
+            resolve(found);
+        }
+
+        reject("no result returned");
+    });
+}
+
 function getManagers() {
     return new Promise(function (resolve, reject) {
         var managers = [];
@@ -55,4 +134,14 @@ function getDepartments() {
 };
 
 
-module.exports = { initialize,getAllEmployees,getManagers,getDepartments };
+module.exports = { 
+    initialize, 
+    getAllEmployees, 
+    getManagers, 
+    getDepartments, 
+    addEmployee,
+    getEmployeesByStatus,
+    getEmployeesByDepartment,
+    getEmployeesByManager,
+    getEmployeeByNum
+};
