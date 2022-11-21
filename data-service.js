@@ -3,19 +3,15 @@ var departments = [];
 
 const fs = require('fs');
 function initialize() {
-
     return new Promise(function (resolve, reject) {
-
         fs.readFile('./data/employees.json', (err, data) => {
             if (err) reject("Failure to read file employees.json!");
             employees = JSON.parse(data);
-            console.log(employees.length);
         });
 
         fs.readFile('./data/departments.json', (err, data) => {
             if (err) reject("Failure to read file departments.json!");
             departments = JSON.parse(data);
-            console.log(departments.length);
         });
         resolve();
     });
@@ -41,7 +37,7 @@ function addEmployee(employeeData) {
 
         employeeData.employeeNum = employees.length + 1;
         employees.push(employeeData);
-        
+
         resolve();
     });
 }
@@ -49,7 +45,7 @@ function addEmployee(employeeData) {
 function getEmployeesByStatus(status) {
     return new Promise((resolve, reject) => {
         let filterdEmployees = [];
-        for (let i=0; i<employees.length; i++) {
+        for (let i = 0; i < employees.length; i++) {
             if (employees[i].status === status) filterdEmployees.push(employees[i]);
         }
 
@@ -126,22 +122,48 @@ function getManagers() {
 
 function getDepartments() {
     return new Promise(function (resolve, reject) {
-       if (departments.length == 0)
+        if (departments.length == 0)
             reject("no result returned");
         resolve(departments);
     });
 
 };
 
+function updateEmployee(employeeData) {
+    return new Promise(function (resolve, reject) {
+        let found = employees.find(employee => employee.employeeNum == employeeData.employeeNum);
+        if (found) {
+            found.employeeNum = employeeData.employeeNum,
+                found.firstName = employeeData.firstName,
+                found.lastName = employeeData.lastName,
+                found.email = employeeData.email,
+                found.SSN = employeeData.SSN,
+                found.addressStreet = employeeData.addressStreet,
+                found.addressCity = employeeData.addressCity,
+                found.addressState = employeeData.addressState,
+                found.addressPostal = employeeData.addressPostal,
+                found.maritalStatus = employeeData.maritalStatus,
+                found.isManager = employeeData.isManager,
+                found.employeeManagerNum = employeeData.employeeManagerNum,
+                found.status = employeeData.status,
+                found.department = employeeData.department,
+                found.hireDate = employeeData.hireDate
+            resolve();
+        }
 
-module.exports = { 
-    initialize, 
-    getAllEmployees, 
-    getManagers, 
-    getDepartments, 
+        reject("no result returned");
+    });
+}
+
+module.exports = {
+    initialize,
+    getAllEmployees,
+    getManagers,
+    getDepartments,
     addEmployee,
     getEmployeesByStatus,
     getEmployeesByDepartment,
     getEmployeesByManager,
-    getEmployeeByNum
+    getEmployeeByNum,
+    updateEmployee
 };
