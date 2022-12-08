@@ -15,10 +15,11 @@ const Sequelize = require("sequelize");
 //   }
 // );
 
-var sequelize = new Sequelize("web322", "postgres", "12wq", {
+var sequelize = new Sequelize("web322", "postgres", "postgres", {
   host: "localhost",
   dialect: "postgres",
   port: 5432,
+  query: { raw: true }, // update here, you. Need this
 });
 
 sequelize
@@ -58,7 +59,7 @@ const Department = sequelize.define("Department", {
 });
 
 function initialize() {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sequelize
       .sync()
       .then(() => {
@@ -71,7 +72,7 @@ function initialize() {
 }
 
 function getAllEmployees() {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     Employee.findAll()
       .then((employees) => {
         if (employees.length === 0) reject("no result returned");
@@ -82,22 +83,35 @@ function getAllEmployees() {
 }
 
 function addEmployee(employeeData) {
-  return new Promise(function (resolve, reject) {
-    reject();
+  return new Promise((resolve, reject) => {
+    employeeData.isManager = employeeData.isManager ? true : false;
+
+    for (const property in employeeData) {
+      value = employeeData[property];
+      employeeData[property] = value === "" ? null : value;
+    }
+
+    Employee.create(employeeData)
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject("unable to create employee");
+      });
   });
 }
 
 function getEmployeesByStatus(status) {
   return new Promise((resolve, reject) => {
-    // Employee.findAll()
-    //   .then((employees) => {
-    //     let filterdEmployees = employees.filter(
-    //       (employee) => employee.status === status
-    //     );
-    //     if (filterdEmployees.length === 0) reject("no result returned");
-    //     resolve(filterdEmployees);
-    //   })
-    //   .catch(() => reject("no results returned"));
+    Employee.findAll()
+      .then((employees) => {
+        let filterdEmployees = employees.filter(
+          (employee) => employee.status === status
+        );
+        if (filterdEmployees.length === 0) reject("no result returned");
+        resolve(filterdEmployees);
+      })
+      .catch(() => reject("no results returned"));
 
     Employee.findAll({
       where: {
@@ -114,37 +128,137 @@ function getEmployeesByStatus(status) {
 
 function getEmployeesByDepartment(department) {
   return new Promise((resolve, reject) => {
-    reject();
+    Employee.findAll()
+      .then((employees) => {
+        let filterdEmployees = employees.filter(
+          (employee) => employee.department == department
+        );
+
+        if (filterdEmployees.length === 0) reject("no result returned");
+        resolve(filterdEmployees);
+      })
+      .catch(() => reject("no results returned"));
   });
 }
 
 function getEmployeesByManager(manager) {
   return new Promise((resolve, reject) => {
-    reject();
+    Employee.findAll()
+      .then((employees) => {
+        let filterdEmployees = employees.filter(
+          (employee) => employee.employeeManagerNum == manager
+        );
+
+        if (filterdEmployees.length === 0) reject("no result returned");
+        resolve(filterdEmployees);
+      })
+      .catch(() => reject("no results returned"));
   });
 }
 
 function getEmployeeByNum(num) {
   return new Promise((resolve, reject) => {
-    reject();
+    Employee.findAll()
+      .then((employees) => {
+        let found = employees.find((employee) => employee.employeeNum == num);
+
+        if (found) resolve(found);
+        reject("no result returned");
+      })
+      .catch(() => reject("no results returned"));
   });
 }
 
 function getManagers() {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     reject();
   });
 }
 
 function getDepartments() {
-  return new Promise(function (resolve, reject) {
-    reject();
+  return new Promise((resolve, reject) => {
+    Department.findAll()
+      .then((departments) => {
+        if (departments.length === 0) reject("no result returned");
+        resolve(departments);
+      })
+      .catch(() => reject("no results returned"));
   });
 }
 
 function updateEmployee(employeeData) {
-  return new Promise(function (resolve, reject) {
-    reject();
+  return new Promise((resolve, reject) => {
+    employeeData.isManager = employeeData.isManager ? true : false;
+
+    for (const property in employeeData) {
+      value = employeeData[property];
+      employeeData[property] = value === "" ? null : value;
+    }
+
+    Employee.update(employeeData, {
+      where: { employeeNum: employeeData.employeeNum },
+    })
+      .then(() => {
+        resolve();
+      })
+      .catch(() => {
+        reject("unable to update employee");
+      });
+  });
+}
+
+function addDepartment(departmentData) {
+  return new Promise((resolve, reject) => {
+    for (const property in departmentData) {
+      value = departmentData[property];
+      departmentData[property] = value === "" ? null : value;
+    }
+
+    Department.create(departmentData)
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject("unable to create department");
+      });
+  });
+}
+
+function updateDepartment(departmentData) {
+  return new Promise((resolve, reject) => {
+    for (const property in departmentData) {
+      value = departmentData[property];
+      departmentData[property] = value === "" ? null : value;
+    }
+    Department.update(departmentData, {
+      where: { departmentId: departmentData.departmentId },
+    })
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject("unable to update department");
+      });
+  });
+}
+
+function getDepartmentById(id) {
+  return new Promise((resolve, reject) => {
+    Department.findAll({ where: { departmentId: id } })
+      .then((departments) => {
+        resolve(departments[0]);
+      })
+      .catch(() => reject("no results returned"));
+  });
+}
+
+function deleteEmployeeByNum(empNum) {
+  return new Promise((resolve, reject) => {
+    Employee.destroy({ where: { employeeNum: empNum } })
+      .then(() => {
+        resolve();
+      })
+      .catch(() => reject("Error on Delete"));
   });
 }
 
@@ -159,4 +273,8 @@ module.exports = {
   getEmployeesByManager,
   getEmployeeByNum,
   updateEmployee,
+  addDepartment,
+  updateDepartment,
+  getDepartmentById,
+  deleteEmployeeByNum,
 };
