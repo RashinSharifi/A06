@@ -18,11 +18,14 @@ var User;
 
 function initialize() {
   return new Promise((resolve, reject) => {
+    // mongodb+srv://psi:12wq@sandbox.lkwgo.mongodb.net/web322_week8?retryWrites=true&w=majority
+    // mongodb://localhost:27017/web322_week8
     let conn = mongoose.createConnection(
-      `mongodb://localhost:27017/web322_week8`
+      `mongodb+srv://psi:12wq@sandbox.lkwgo.mongodb.net/web322_week8?retryWrites=true&w=majority`
     );
     conn.on("error", (err) => {
       reject("Connection error: ", err);
+      return;
     });
 
     User = conn.model("users", userSchema);
@@ -35,12 +38,15 @@ function registerUser(userData) {
   return new Promise((resolve, reject) => {
     if (!password || !password2 || !password.trim() || !password2.trim()) {
       reject("user name cannot be empty or only white spaces!");
+      return;
     }
 
     if (password !== password2) {
-      reject("Error: Passwords do not match");
+      reject("Passwords do not match");
+      return;
     }
 
+    console.log("sss");
     bcrypt
       .hash(password, 10)
       .then((hash) => {
@@ -72,6 +78,7 @@ function checkUser(userData) {
       .then((foundUser) => {
         if (!foundUser) {
           reject(`Unable to find user: ${userData.userName}`);
+          return;
         }
 
         bcrypt.compare(userData.password, foundUser.password).then((res) => {
