@@ -1,26 +1,26 @@
 const Sequelize = require("sequelize");
 
-// var sequelize = new Sequelize(
-//   "pfpzdkbe",
-//   "pfpzdkbe",
-//   "v460Vbm5_f3fpviEcvbbXvl0oud20gOL",
-//   {
-//     host: "heffalump.db.elephantsql.com",
-//     dialect: "postgres",
-//     port: 5432,
-//     dialectOptions: {
-//       ssl: true,
-//     },
-//     query: { raw: true }, // update here, you. Need this
-//   }
-// );
+var sequelize = new Sequelize(
+  "dbmmvgsd",
+  "dbmmvgsd",
+  "jNc5T7rwmfz8nDWI-TiCVQ_QBEvVgvWK",
+   {
+    host: "lucky.db.elephantsql.com",
+    dialect: "postgres",
+     port: 5432,
+   dialectOptions: {
+      ssl: true,
+  },
+  query: { raw: true }, // update here, you. Need this
+ }
+);
 
-var sequelize = new Sequelize("web322", "postgres", "postgres", {
+/*var sequelize = new Sequelize("web322", "postgres", "postgres", {
   host: "localhost",
   dialect: "postgres",
   port: 5432,
   query: { raw: true }, // update here, you. Need this
-});
+});*/
 
 sequelize
   .authenticate()
