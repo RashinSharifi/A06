@@ -21,7 +21,7 @@ function initialize() {
     // mongodb+srv://psi:12wq@sandbox.lkwgo.mongodb.net/web322_week8?retryWrites=true&w=majority
     // mongodb://localhost:27017/web322_week8
     let conn = mongoose.createConnection(
-      `mongodb+srv://rashin:<Cc@123456>@senecaweb.ccyg86x.mongodb.net/web322_week8?retryWrites=true&w=majority`
+      `mongodb://rashin:Cc@123456@senecaweb.ccyg86x.mongodb.net/web322_week8?retryWrites=true&w=majority`
     );
     conn.on("error", (err) => {
       reject("Connection error: ", err);
